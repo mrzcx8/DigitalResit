@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resit Digital</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 350px; margin: auto; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .resit { border: 1px solid #000; padding: 15px; margin-top: 10px; text-align: left; }
+        button { margin-top: 10px; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h2>Jana Resit Digital</h2>
+    <div class="container">
+        <h3>Maklumat Penjual</h3>
+        <input type="text" id="namaSyarikat" placeholder="Nama Syarikat" required><br>
+        <input type="text" id="alamatSyarikat" placeholder="Alamat Syarikat" required><br>
+        <input type="text" id="telefonSyarikat" placeholder="Telefon" required><br>
+        <input type="email" id="emailSyarikat" placeholder="E-mel" required><br>
+        
+        <h3>Maklumat Pembeli</h3>
+        <input type="text" id="nama" placeholder="Nama Pembeli" required><br>
+        <input type="text" id="alamat" placeholder="Alamat Pembeli" required><br>
+        <input type="email" id="emailPembeli" placeholder="E-mel Pembeli" required><br>
+        
+        <h3>Maklumat Transaksi</h3>
+        <input type="text" id="tarikh" placeholder="Tarikh (YYYY-MM-DD)" required><br>
+        <input type="text" id="masa" placeholder="Masa (HH:MM)" required><br>
+        <input type="text" id="noResit" placeholder="Nombor Resit" required><br>
+        <select id="kaedahPembayaran">
+            <option value="Cash">Cash</option>
+            <option value="Online Banking">Online Banking</option>
+            <option value="Other">Other</option>
+        </select><br>
+        
+        <h3>Senarai Item/Perkhidmatan</h3>
+        <div id="senaraiItem"></div>
+        <button onclick="tambahItem()">Tambah Item</button>
+        <br>
+        <h3>Jumlah Keseluruhan</h3>
+        <input type="number" id="sst" placeholder="SST/Tax (RM)" oninput="kiraJumlah()"><br>
+        <input type="number" id="jumlah" placeholder="Jumlah (RM)" readonly><br>
+        
+        <h3>Pengesahan Pembayaran</h3>
+        <select id="statusPembayaran">
+            <option value="Berjaya">Berjaya</option>
+            <option value="Diproses">Diproses</option>
+        </select><br>
+        
+        <button onclick="janaResit()">Jana Resit</button>
+        <button onclick="cetakResit()">Cetak Resit</button>
+        <div id="resit" class="resit" style="display:none;"></div>
+        <p>@2025 Resit Mr.Syah988</p>
+        <p><i>Nota: Resit ini adalah resit digital dan sah digunakan untuk rujukan transaksi.</i></p>
+    </div>
+    
+    <script>
+        function tambahItem() {
+            let div = document.createElement("div");
+            div.innerHTML = '<input type="text" class="item" placeholder="Nama Item" required> ' +
+                            '<input type="number" class="harga" placeholder="Harga (RM)" required oninput="kiraJumlah()">';
+            document.getElementById("senaraiItem").appendChild(div);
+        }
+        
+        function kiraJumlah() {
+            let jumlah = 0;
+            document.querySelectorAll(".harga").forEach(input => {
+                jumlah += parseFloat(input.value) || 0;
+            });
+            let sst = parseFloat(document.getElementById("sst").value) || 0;
+            document.getElementById("jumlah").value = jumlah + sst;
+        }
+        
+        function janaResit() {
+            let resitDiv = document.getElementById("resit");
+            resitDiv.style.display = "block";
+            
+            let itemList = "";
+            document.querySelectorAll(".item").forEach((item, index) => {
+                let harga = document.querySelectorAll(".harga")[index].value;
+                itemList += `<p>${item.value} - RM ${harga}</p>`;
+            });
+            
+            resitDiv.innerHTML = `
+                <h3>Resit Pembelian</h3>
+                <p><strong>Penjual:</strong> ${document.getElementById("namaSyarikat").value}</p>
+                <p><strong>Pembeli:</strong> ${document.getElementById("nama").value}</p>
+                <p><strong>Tarikh:</strong> ${document.getElementById("tarikh").value}</p>
+                <p><strong>Masa:</strong> ${document.getElementById("masa").value}</p>
+                <h4>Senarai Item</h4>
+                ${itemList}
+                <p><strong>Jumlah Keseluruhan:</strong> RM ${document.getElementById("jumlah").value}</p>
+            `;
+        }
+        
+        function cetakResit() {
+            let printContent = document.getElementById("resit").innerHTML;
+            let originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+        }
+    </script>
+</body>
+</html>
